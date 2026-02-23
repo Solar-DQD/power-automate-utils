@@ -1,10 +1,10 @@
-import { 
-  Controller, 
-  Post, 
-  Body, 
-  HttpException, 
-  HttpStatus,
-  UseGuards
+import {
+    Controller,
+    Post,
+    Body,
+    HttpException,
+    HttpStatus,
+    UseGuards
 } from '@nestjs/common';
 import { ImageConversionService } from './image-conversion.service';
 import { ApiKeyGuard } from '../auth/api-key.guard';
@@ -14,24 +14,24 @@ export class ConvertImageDto {
     @IsNotEmpty()
     @IsString()
     image: string;
-};
-
-export class RemoveBackgroundDto {
-    @IsNotEmpty()
-    @IsString()
-    image: string;
 
     @IsOptional()
     @IsNumber()
     @Min(0)
-    @Max(255)
-    threshold?: number = 240;
-};
+    @Max(9)
+    compressionLevel?: number = 6;
+
+    @IsOptional()
+    @IsNumber()
+    @Min(50)
+    @Max(1200)
+    maxSize?: number = 400;
+}
 
 @Controller('api/image')
 @UseGuards(ApiKeyGuard)
 export class ImageConversionController {
-    constructor(private readonly imageConversionService: ImageConversionService) {}
+    constructor(private readonly imageConversionService: ImageConversionService) { }
 
     @Post('convert-to-png')
     async convertToPng(@Body() body: ConvertImageDto) {
@@ -40,7 +40,10 @@ export class ImageConversionController {
                 throw new HttpException('Se requiere una imagen', HttpStatus.BAD_REQUEST);
             };
 
-            const pngBase64 = await this.imageConversionService.convertJpegToPng(body.image);
+            const pngBase64 = await this.imageConversionService.convertToPng(
+                body.image,
+                body.compressionLevel
+            );
 
             return {
                 success: true,
@@ -50,33 +53,6 @@ export class ImageConversionController {
         } catch (error) {
             throw new HttpException(
                 error.message || 'Fallo al convertir imágen',
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        };
-    };
-
-    @Post('remove-white-background')
-    async removeWhiteBackground(@Body() body: RemoveBackgroundDto) {
-        try {
-            if (!body.image) {
-                throw new HttpException('Se requiere una imagen', HttpStatus.BAD_REQUEST);
-            };
-
-            const threshold = body.threshold ?? 240;
-            
-            const pngWithTransparency = await this.imageConversionService.removeWhiteBackground(
-                body.image,
-                threshold
-            );
-            
-            return {
-                success: true,
-                png: pngWithTransparency,
-                message: 'Fondo removido exitosamente'
-            };
-        } catch (error) {
-            throw new HttpException(
-                error.message || 'Fallo al remover fondo',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         };
