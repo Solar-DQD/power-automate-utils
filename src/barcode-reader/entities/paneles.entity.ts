@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('paneles_perla')
+@Entity('paneles')
 export class Panel {
     @PrimaryGeneratedColumn()
     id: number;
@@ -10,4 +10,7 @@ export class Panel {
 
     @Column({ unique: true })
     panel: string;
+
+    @Column()
+    parque: string;
 };

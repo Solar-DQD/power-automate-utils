@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Panel } from './entities/paneles.entity';
 import { Repository } from 'typeorm';
-import { PanelEscaneado } from './barcode-reader.controller';
+import { PanelesEscaneados } from './barcode-reader.controller';
 
 @Injectable()
 export class BarcodeReaderService {
@@ -12,8 +12,14 @@ export class BarcodeReaderService {
         private panelesRepository: Repository<Panel>
     ) { }
 
-    async createPanel(params: PanelEscaneado): Promise<void> {
-        const panel = this.panelesRepository.create({ panel: params.panel, tracker: params.tracker });
-        await this.panelesRepository.save(panel);
+    async createPanel(params: PanelesEscaneados): Promise<void> {
+        const paneles = params.paneles.map(scan =>
+            this.panelesRepository.create({
+                panel: scan,
+                tracker: params.tracker,
+                parque: params.parque
+            })
+        );
+        await this.panelesRepository.save(paneles);
     };
 };

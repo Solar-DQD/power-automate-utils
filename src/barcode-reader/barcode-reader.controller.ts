@@ -3,14 +3,18 @@ import { BarcodeReaderService } from './barcode-reader.service';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiKeyGuard } from 'src/auth/api-key.guard';
 
-export class PanelEscaneado {
+export class PanelesEscaneados {
+  @IsNotEmpty()
+  @IsString()
+  parque: string;
+
   @IsNotEmpty()
   @IsString()
   tracker: string;
 
   @IsNotEmpty()
   @IsString()
-  panel: string;
+  paneles: string[];
 };
 
 @Controller('barcodereader')
@@ -19,7 +23,7 @@ export class BarcodeReaderController {
   constructor(private readonly barcodereaderService: BarcodeReaderService) { }
 
   @Post()
-  async registerPanel(@Body() body: PanelEscaneado) {
+  async registerPanel(@Body() body: PanelesEscaneados) {
     return this.barcodereaderService.createPanel(body);
   };
 };
