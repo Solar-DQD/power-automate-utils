@@ -17,7 +17,8 @@ export class BarcodeReaderService {
             this.panelesRepository.create({
                 panel: scan,
                 tracker: params.tracker,
-                parque: params.parque
+                parque: params.parque,
+                creadoPor: params.creadoPor
             })
         );
         await this.panelesRepository.save(paneles);

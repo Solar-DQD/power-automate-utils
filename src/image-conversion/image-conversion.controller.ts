@@ -42,7 +42,8 @@ export class ImageConversionController {
 
             const pngBase64 = await this.imageConversionService.convertToPng(
                 body.image,
-                body.compressionLevel
+                body.compressionLevel,
+                body.maxSize
             );
 
             return {

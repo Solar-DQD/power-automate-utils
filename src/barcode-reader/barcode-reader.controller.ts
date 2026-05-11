@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { BarcodeReaderService } from './barcode-reader.service';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiKeyGuard } from 'src/auth/api-key.guard';
 
 export class PanelesEscaneados {
@@ -16,6 +16,10 @@ export class PanelesEscaneados {
   @ArrayNotEmpty() // ensures array is not empty
   @IsString({ each: true })
   paneles: string[];
+
+  @IsString()
+  @IsOptional()
+  creadoPor?: string;
 };
 
 @Controller('barcodereader')

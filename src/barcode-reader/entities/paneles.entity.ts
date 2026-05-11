@@ -13,4 +13,7 @@ export class Panel {
 
     @Column()
     parque: string;
+
+    @Column()
+    creadoPor: string;
 };
